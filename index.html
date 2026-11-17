@@ -1,0 +1,765 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Culture Shift</title>
+<meta name="description" content="A 12 to 15 minute game: run a company's security awareness and culture program for a year, and find out what actually changes behavior.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow+Semi+Condensed:wght@500;600;700&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:ital,wght@0,400;0,500;0,600;1,400&display=swap">
+<style>
+/* Same visual system as The 2AM Page, Keys to the Agent and Ship It? */
+:root{
+  --bg:#f3f1ee; --panel:#ffffff; --ink:#1c1a19; --muted:#6a6460; --line:#dcd6d0;
+  --red:#cc0000; --red-soft:#fbe6e6; --aqua:#00796b; --aqua-soft:#e2f2ef; --amber:#a35a00; --amber-soft:#fbefdc;
+  --good:#2e7d4f; --good-soft:#e3f2e8; --shadow:0 1px 0 rgba(0,0,0,.04);
+  --f-display:"Barlow Semi Condensed","Arial Narrow",system-ui,sans-serif;
+  --f-body:"IBM Plex Sans",system-ui,-apple-system,"Segoe UI",sans-serif;
+  --f-mono:"IBM Plex Mono",ui-monospace,"SFMono-Regular",Menlo,Consolas,monospace;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#161413; --panel:#211e1c; --ink:#f1ece8; --muted:#a69d97; --line:#3a3532;
+  --red:#ff6b6b; --red-soft:#3a1f1f; --aqua:#4fc3b1; --aqua-soft:#16302c; --amber:#f0a94b; --amber-soft:#35281a;
+  --good:#6fcf97; --good-soft:#18301f; --shadow:none; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#161413; --panel:#211e1c; --ink:#f1ece8; --muted:#a69d97; --line:#3a3532;
+  --red:#ff6b6b; --red-soft:#3a1f1f; --aqua:#4fc3b1; --aqua-soft:#16302c; --amber:#f0a94b; --amber-soft:#35281a;
+  --good:#6fcf97; --good-soft:#18301f; --shadow:none; color-scheme:dark}
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--ink);font-family:var(--f-body);font-size:16px;line-height:1.55;margin:0}
+.credit{margin-top:32px;padding-top:12px;border-top:1px solid var(--line);font-size:12px;color:var(--muted)}
+.credit a{color:inherit}
+.wrap{max-width:1120px;margin:0 auto;padding-block:20px 48px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+h1,h2,h3{font-family:var(--f-display);font-weight:600;line-height:1.1;text-wrap:balance;margin:0}
+.eyebrow{font-family:var(--f-mono);font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+button{font:inherit;color:inherit;cursor:pointer}
+button:focus-visible,a:focus-visible{outline:3px solid var(--aqua);outline-offset:2px}
+a{color:var(--aqua)}
+.topbar{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;border-bottom:3px solid var(--red);padding-bottom:10px;margin-bottom:22px}
+.brand{display:flex;align-items:baseline;gap:12px;flex-wrap:wrap}
+.brand h1{font-size:28px;letter-spacing:.01em}
+.brand .eyebrow{color:var(--red)}
+.linkbtn{background:none;border:1px solid var(--line);border-radius:6px;padding:6px 12px;font-size:14px;color:var(--muted)}
+.linkbtn:hover{border-color:var(--ink);color:var(--ink)}
+.intro{display:grid;grid-template-columns:minmax(0,1.3fr) minmax(0,1fr);gap:28px;align-items:start}
+.intro .lede{font-size:19px;max-width:60ch}
+.intro h2{font-size:44px;margin:6px 0 14px}
+.rules{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:18px 20px;box-shadow:var(--shadow)}
+.rules ul{margin:8px 0 0;padding-left:18px}
+.rules li{margin:6px 0}
+.cases{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px;margin-top:26px}
+.case{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:16px;display:flex;flex-direction:column;gap:8px;text-align:left}
+.case:hover{border-color:var(--ink)}
+.case h3{font-size:21px}
+.case p{margin:0;font-size:14px;color:var(--muted)}
+.tag{display:inline-block;font-family:var(--f-mono);font-size:11px;letter-spacing:.06em;text-transform:uppercase;padding:2px 8px;border-radius:99px;border:1px solid var(--line);color:var(--muted);align-self:flex-start}
+.primary{background:var(--red);color:#fff;border:0;border-radius:8px;padding:13px 22px;font-weight:600;font-size:16px}
+.primary:hover{filter:brightness(1.08)}
+.row{display:flex;gap:12px;align-items:center;flex-wrap:wrap;margin-top:22px}
+.note{font-size:13px;color:var(--muted)}
+.game{display:grid;grid-template-columns:minmax(0,1fr) 320px;gap:22px;align-items:start}
+.scene{background:var(--panel);border:1px solid var(--line);border-radius:12px;overflow:hidden;box-shadow:var(--shadow)}
+.scene-head{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;align-items:center;padding:14px 20px;border-bottom:1px solid var(--line)}
+.clock{font-family:var(--f-mono);font-weight:600;font-size:15px;color:var(--red)}
+.step{font-family:var(--f-mono);font-size:12px;color:var(--muted)}
+.scene-body{padding:20px 22px 24px}
+.scene-body h2{font-size:30px;margin-bottom:10px}
+.scene-body p{margin:0 0 12px;max-width:68ch}
+.inject{border-left:4px solid var(--ink);background:var(--bg);padding:10px 14px;border-radius:0 8px 8px 0;margin:4px 0 16px;font-size:15px}
+.inject .eyebrow{display:block;margin-bottom:2px}
+.outcome{border-radius:10px;padding:14px 16px;margin:4px 0 16px;border:1px solid var(--line)}
+.outcome.l0{background:var(--good-soft);border-color:var(--good)}
+.outcome.l1{background:var(--amber-soft);border-color:var(--amber)}
+.outcome.l2{background:var(--red-soft);border-color:var(--red)}
+.outcome .verdict{display:block;margin-bottom:4px}
+.l0 .verdict{color:var(--good)} .l1 .verdict{color:var(--amber)} .l2 .verdict{color:var(--red)}
+.outcome p{margin:0}
+.ask{font-weight:600;margin-top:4px!important}
+.choices{display:grid;gap:10px;margin-top:8px}
+.choice{display:grid;grid-template-columns:32px minmax(0,1fr);gap:12px;align-items:start;text-align:left;background:var(--panel);border:1.5px solid var(--line);border-radius:10px;padding:12px 14px}
+.choice:hover{border-color:var(--ink)}
+.choice .k{font-family:var(--f-mono);font-weight:600;border:1px solid var(--line);border-radius:6px;text-align:center;padding:2px 0;color:var(--muted)}
+.choice[disabled]{cursor:default;opacity:.55}
+.choice.picked{opacity:1;border-color:var(--ink)}
+.result{margin-top:18px;border-radius:10px;padding:16px 18px;border:1px solid var(--line);background:var(--bg)}
+.result.best{background:var(--good-soft);border-color:var(--good)}
+.result.ok{background:var(--amber-soft);border-color:var(--amber)}
+.result.poor{background:var(--red-soft);border-color:var(--red)}
+.verdict{font-family:var(--f-mono);font-size:12px;letter-spacing:.08em;text-transform:uppercase;font-weight:600}
+.best .verdict{color:var(--good)} .ok .verdict{color:var(--amber)} .poor .verdict{color:var(--red)}
+.result p{margin:6px 0 0}
+.lesson{font-size:14px;color:var(--muted);margin-top:8px!important}
+.result .primary{margin-top:14px}
+.rail{display:grid;gap:16px;position:sticky;top:calc(env(safe-area-inset-top,0px) + 12px)}
+.board{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:16px;box-shadow:var(--shadow)}
+.board h3{font-size:18px;margin-bottom:10px}
+.co{font-weight:600}
+.co-sub{font-size:13px;color:var(--muted);margin-bottom:12px}
+.meter{margin:10px 0}
+.meter .lab{display:flex;justify-content:space-between;font-size:13px}
+.meter .lab b{font-family:var(--f-mono);font-weight:500;font-variant-numeric:tabular-nums}
+.meter .hint{font-size:11px;color:var(--muted)}
+.bar{height:8px;background:var(--bg);border-radius:99px;overflow:hidden;border:1px solid var(--line);margin-top:4px}
+.bar i{display:block;height:100%;border-radius:99px;transition:width .5s ease}
+.legs{display:flex;gap:6px;flex-wrap:wrap;margin-top:10px}
+.leg{font-family:var(--f-mono);font-size:11px;padding:2px 8px;border-radius:99px;border:1px solid var(--line);color:var(--muted)}
+.leg.on{border-color:var(--red);color:var(--red);background:var(--red-soft)}
+.leg.half{border-color:var(--amber);color:var(--amber);background:var(--amber-soft)}
+.log{list-style:none;margin:0;padding:0;font-size:13px;max-height:320px;overflow:auto}
+.log li{display:grid;grid-template-columns:76px minmax(0,1fr);gap:8px;padding:7px 0;border-top:1px dashed var(--line)}
+.log li:first-child{border-top:0}
+.log time{font-family:var(--f-mono);font-size:12px;color:var(--muted)}
+.log .empty{display:block;color:var(--muted);font-style:italic}
+.dot{display:inline-block;width:8px;height:8px;border-radius:50%;margin-right:6px;vertical-align:1px}
+.progress{display:flex;gap:4px;padding:10px 20px 14px;border-top:1px solid var(--line)}
+.progress span{flex:1;height:6px;border-radius:99px;background:var(--line)}
+.progress span.done{background:var(--ink)}
+.progress span.now{background:var(--red)}
+.progress span.live{outline:1px dashed var(--muted);outline-offset:1px}
+.end h2{font-size:40px;margin:6px 0 10px}
+.grid2{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px;margin:18px 0}
+.stat{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:12px 14px}
+.stat .n{font-family:var(--f-mono);font-size:26px;font-weight:600;font-variant-numeric:tabular-nums}
+.stat .l{font-size:13px;color:var(--muted)}
+.trifecta{display:grid;grid-template-columns:minmax(0,300px) minmax(0,1fr);gap:22px;align-items:center;background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:18px}
+.trifecta svg{width:100%;height:auto}
+.trifecta svg text{font-family:var(--f-mono);font-size:11px;fill:var(--ink)}
+.debrief{display:grid;gap:10px;margin-top:10px}
+.dl{background:var(--panel);border:1px solid var(--line);border-left-width:5px;border-radius:8px;padding:12px 14px}
+.dl.best{border-left-color:var(--good)} .dl.ok{border-left-color:var(--amber)} .dl.poor{border-left-color:var(--red)}
+.dl .h{display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap;font-size:13px;color:var(--muted);font-family:var(--f-mono)}
+.dl p{margin:6px 0 0;font-size:15px}
+.real{background:var(--aqua-soft);border:1px solid var(--aqua);border-radius:10px;padding:16px 18px;margin-top:22px}
+.real h3{font-size:22px;color:var(--aqua);margin-bottom:6px}
+.real ul{margin:6px 0 0;padding-left:18px}
+.real li{margin:6px 0}
+.sec{margin-top:28px}
+.sec>h3{font-size:24px;margin-bottom:8px}
+@media (max-width:860px){.game,.intro,.trifecta{grid-template-columns:minmax(0,1fr)}.rail{position:static}.cases,.grid2{grid-template-columns:minmax(0,1fr)}.intro h2{font-size:34px}}
+@media (prefers-reduced-motion:reduce){.bar i{transition:none}}
+@media print{
+  :root,:root[data-theme="dark"]{--bg:#ffffff;--panel:#ffffff;--ink:#1c1a19;--muted:#555;--line:#cfcfcf;color-scheme:light}
+  body{background:#fff;font-size:11pt}
+  .wrap{max-width:none;padding:0}
+  .topbar{margin-bottom:12px}
+  #homeBtn,.end .row,.rail .log{display:none!important}
+  .game{display:block}
+  .rail{display:none!important}
+  .grid2{grid-template-columns:repeat(4,minmax(0,1fr))!important}
+  .trifecta{grid-template-columns:200px minmax(0,1fr)!important}
+  .dl,.stat,.real,.outcome,.trifecta{break-inside:avoid;page-break-inside:avoid}
+  .printonly{display:block!important}
+  *{-webkit-print-color-adjust:exact;print-color-adjust:exact;box-shadow:none!important}
+  @page{margin:14mm}
+}
+.printonly{display:none}
+
+/* Culture Shift additions */
+.watch{margin-top:14px;padding:10px 12px;border:1px dashed var(--red);border-radius:8px}
+.watch .lab{display:flex;justify-content:space-between;font-size:13px;margin-top:4px}
+.watch b{font-family:var(--f-mono);font-weight:600;color:var(--red)}
+.budgetbox{margin-top:12px;display:flex;flex-direction:column;gap:2px;font-size:14px}
+.budgetbox b{font-family:var(--f-mono);font-weight:600}
+.costtag{display:inline-block;font-family:var(--f-mono);font-size:12px;border:1px solid var(--line);border-radius:99px;padding:0 8px;margin-left:6px;color:var(--muted);white-space:nowrap}
+.choice[disabled]:not(.picked){opacity:.4}
+</style>
+<style>:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}[hidden]{display:none!important}</style>
+</head>
+<body>
+<div class="wrap">
+  <header class="topbar">
+    <div class="brand"><h1>Culture Shift</h1><span class="eyebrow">Security culture and awareness</span></div>
+    <button class="linkbtn" id="homeBtn" hidden>New scenario</button>
+  </header>
+  <main id="app"></main>
+  <footer class="credit">&copy; 2026 Chuck Kesler &middot; Licensed under <a href="https://creativecommons.org/licenses/by-nc/4.0/" rel="license noopener" target="_blank">CC BY-NC 4.0</a> &middot; A companion to <a href="https://jckesler.github.io/the-2am-page/" target="_blank" rel="noopener">The 2AM Page</a></footer>
+</div>
+<script>
+/* ReportKit 1.0: the PDF report, run code and result check shared by these games.
+   Builds a real PDF in the browser with no library and no network. Nothing is stored or sent. */
+window.ReportKit = (function(){
+"use strict";
+var WR=[278,278,355,556,556,889,667,191,333,333,389,584,278,333,278,278,556,556,556,556,556,556,556,556,556,556,278,278,584,584,584,556,1015,667,667,722,722,667,611,778,722,278,500,667,556,833,722,778,667,778,722,667,611,722,667,944,667,667,611,278,278,278,469,556,333,556,556,500,556,556,278,556,556,222,222,500,222,833,556,556,556,556,333,500,278,556,500,722,500,500,500,334,260,334,584,761,556,0,222,556,333,1000,556,556,333,1000,667,333,1000,0,611,0,0,222,222,333,333,350,556,1000,333,1000,500,333,944,0,500,667,278,333,556,556,556,556,260,556,333,737,370,556,584,333,737,333,400,584,333,333,333,556,537,278,333,333,365,556,834,834,834,611,667,667,667,667,667,667,1000,722,667,667,667,667,278,278,278,278,722,722,778,778,778,778,778,584,778,722,722,722,722,667,667,611,556,556,556,556,556,556,889,500,556,556,556,556,278,278,278,278,556,556,556,556,556,556,556,584,611,556,556,556,556,500,556,500],WB=[278,333,474,556,556,889,722,238,333,333,389,584,278,333,278,278,556,556,556,556,556,556,556,556,556,556,333,333,584,584,584,611,975,722,722,722,722,667,611,778,722,278,556,722,611,833,722,778,667,778,722,667,611,722,667,944,667,667,611,333,278,333,584,556,333,556,611,556,611,556,333,611,611,278,278,556,278,889,611,611,611,611,389,556,333,611,556,778,556,556,500,389,280,389,584,761,556,0,278,556,500,1000,556,556,333,1000,667,333,1000,0,611,0,0,278,278,500,500,350,556,1000,333,1000,556,333,944,0,500,667,278,333,556,556,556,556,280,556,333,737,370,556,584,333,737,333,400,584,333,333,333,611,556,278,333,333,365,556,834,834,834,611,722,722,722,722,722,722,1000,722,667,667,667,667,278,278,278,278,722,722,778,778,778,778,778,584,778,722,722,722,722,667,667,611,556,556,556,556,556,556,889,556,556,556,556,556,278,278,278,278,611,611,611,611,611,611,611,584,611,611,611,611,611,556,611,556];
+var CP = {0x20AC:128,0x201A:130,0x0192:131,0x201E:132,0x2026:133,0x2020:134,0x2021:135,0x02C6:136,0x2030:137,0x0160:138,0x2039:139,0x0152:140,0x017D:142,
+  0x2018:145,0x2019:146,0x201C:147,0x201D:148,0x2022:149,0x2013:150,0x2014:151,0x02DC:152,0x2122:153,0x0161:154,0x203A:155,0x0153:156,0x017E:158,0x0178:159};
+var SUBS = [[/→/g,'->'],[/←/g,'<-'],[/≥/g,'>='],[/≤/g,'<='],[/≠/g,'!='],[/ | | /g,' '],[/‑/g,'-']];
+
+function plain(s){ // strip tags and decode the few entities the games use
+  return String(s==null?'':s).replace(/<br\s*\/?>/gi,' ').replace(/<[^>]+>/g,'').replace(/&nbsp;/g,' ').replace(/&amp;/g,'&').replace(/&lt;/g,'<').replace(/&gt;/g,'>').replace(/&quot;/g,'"').replace(/&#39;/g,"'").replace(/&middot;/g,'·').replace(/\s+/g,' ').trim();
+}
+function enc(s){
+  s = plain(s); SUBS.forEach(function(r){ s = s.replace(r[0], r[1]); });
+  var out = [];
+  for(var i=0;i<s.length;i++){ var c = s.charCodeAt(i);
+    if(c>=32 && c<127) out.push(c); else if(c>=160 && c<256) out.push(c); else if(CP[c]) out.push(CP[c]); else if(c>=0xD800 && c<0xDC00){ i++; out.push(63); } else out.push(63); }
+  return out;
+}
+function wOf(b, bold){ var t = bold?WB:WR; var s = 0; for(var i=0;i<b.length;i++){ s += (b[i]>=32 ? (t[b[i]-32]||556) : 0); } return s; }
+function wrap(text, bold, size, maxw){
+  var b = enc(text), lim = maxw*1000/size, words = [[]], lines = [], line = [];
+  for(var i=0;i<b.length;i++){ if(b[i]===32) words.push([]); else words[words.length-1].push(b[i]); }
+  words.forEach(function(w){
+    if(!w.length) return;
+    var cand = line.length ? line.concat([32], w) : w.slice();
+    if(wOf(cand,bold) <= lim){ line = cand; return; }
+    if(line.length){ lines.push(line); line = []; }
+    if(wOf(w,bold) <= lim){ line = w.slice(); return; }
+    var cur = []; w.forEach(function(ch){ if(cur.length && wOf(cur.concat([ch]),bold) > lim){ lines.push(cur); cur = []; } cur.push(ch); }); line = cur;
+  });
+  if(line.length || !lines.length) lines.push(line);
+  return lines;
+}
+function pstr(b){ var s = '('; for(var i=0;i<b.length;i++){ var c = b[i];
+  if(c===40||c===41||c===92) s += '\\'+String.fromCharCode(c); else if(c>126) s += '\\'+('00'+c.toString(8)).slice(-3); else s += String.fromCharCode(c); } return s+')'; }
+function rgb(hex){ hex = hex.replace('#',''); return [0,2,4].map(function(i){ return (parseInt(hex.substr(i,2),16)/255).toFixed(3); }).join(' '); }
+
+var COL = {ink:'#1c1a19', muted:'#6a6460', line:'#dcd6d0', red:'#cc0000', aqua:'#00796b', amber:'#a35a00', good:'#2e7d4f', tint:'#f3f1ee', best:'#2e7d4f', ok:'#a35a00', poor:'#cc0000'};
+
+/* doc = {game, kind, company, sector, title, sub, name, code, rebuilt, stats:[{label,value,max,better,note}],
+          sections:[{heading, intro, entries:[{head, tag, grade, chose, lines:[]}], bullets:[], note}], verify, license} */
+function pdf(doc){
+  var PW = 612, PH = 792, M = 54, CW = PW - 2*M, BOT = 64;
+  var pages = [], ops = null, y = 0;
+  function newPage(){ ops = []; pages.push(ops); y = PH - M; }
+  function need(h){ if(y - h < BOT) newPage(); }
+  function txt(x, yy, b, bold, size, color){ ops.push('BT /'+(bold?'F2':'F1')+' '+size+' Tf '+rgb(color||COL.ink)+' rg '+x.toFixed(2)+' '+yy.toFixed(2)+' Td '+pstr(b)+' Tj ET'); }
+  function box(x, yy, w, h, color){ ops.push(rgb(color)+' rg '+x.toFixed(2)+' '+yy.toFixed(2)+' '+w.toFixed(2)+' '+h.toFixed(2)+' re f'); }
+  function para(text, o){ o = o||{}; var size = o.size||10.5, lead = o.lead||size*1.38, x = M+(o.indent||0), w = CW-(o.indent||0)-(o.right||0);
+    var ls = wrap(text, o.bold, size, w);
+    ls.forEach(function(l){ need(lead); y -= lead; txt(x, y+lead*0.28, l, o.bold, size, o.color); });
+    return ls.length*lead; }
+  function measure(text, o){ o = o||{}; var size = o.size||10.5, lead = o.lead||size*1.38; return wrap(text, o.bold, size, CW-(o.indent||0)-(o.right||0)).length*lead; }
+
+  newPage();
+  // header
+  box(M, y-4, CW, 4, COL.red); y -= 22;
+  txt(M, y, enc(doc.game), true, 20, COL.ink);
+  var kb = enc((doc.kind||'Report').toUpperCase()); txt(PW-M-wOf(kb,true)*8.5/1000, y+2, kb, true, 8.5, COL.muted);
+  y -= 8;
+  para(doc.company + (doc.sector ? '  ·  '+doc.sector : ''), {size:11, color:COL.muted});
+  y -= 8;
+  // meta table
+  var meta = [['Name', doc.name ? doc.name : '(not entered)'], ['Saved', doc.saved], ['Run code', doc.code]];
+  if(doc.rebuilt) meta.push(['Note', 'Rebuilt from a run code with "Check a result", not from a live play.']);
+  var mh = meta.length*16 + 14; need(mh);
+  box(M, y-mh, CW, mh, COL.tint);
+  var my = y - 18;
+  meta.forEach(function(r){ txt(M+12, my, enc(r[0]), true, 9.5, COL.muted); var vb = enc(r[1]); txt(M+80, my, vb, r[0]==='Run code', r[0]==='Run code'?11:10, r[0]==='Note'?COL.red:COL.ink); my -= 16; });
+  y -= mh + 18;
+  // outcome
+  para(doc.title, {size:17, bold:true, lead:22});
+  y -= 2; para(doc.sub, {size:10.5, color:COL.ink});
+  y -= 10;
+  // stats
+  if(doc.stats && doc.stats.length){
+    doc.stats.forEach(function(s){
+      need(26);
+      var lb = enc(s.label + (s.note ? '  ('+s.note+')' : '')); txt(M, y-11, lb, false, 9.5, COL.muted);
+      var vb = enc(String(s.value) + (s.max ? ' / '+s.max : '')); txt(M+CW-wOf(vb,true)*10.5/1000, y-11, vb, true, 10.5, COL.ink);
+      if(s.bar !== false){
+        var frac = Math.max(0, Math.min(1, s.value/(s.max||100)));
+        var good = s.better==='low' ? s.value<=40 : s.value>=60, bad = s.better==='low' ? s.value>65 : s.value<40;
+        var c = s.better ? (good?COL.good:bad?COL.red:COL.amber) : COL.ink;
+        box(M, y-19, CW, 4, COL.line); box(M, y-19, CW*frac, 4, c);
+        y -= 27;
+      } else y -= 18;
+    });
+    y -= 6;
+  }
+  // sections
+  (doc.sections||[]).forEach(function(sec){
+    need(40); y -= 6;
+    para(sec.heading, {size:13, bold:true, lead:18});
+    box(M, y-3, CW, 0.8, COL.line); y -= 8;
+    if(sec.intro){ para(sec.intro, {size:10, color:COL.muted}); y -= 4; }
+    (sec.entries||[]).forEach(function(e){
+      var hdr = e.head, tag = e.tag||'', IND = 12;
+      var hH = measure(hdr, {size:10.5, bold:true, indent:IND}), tH = tag ? measure(tag, {size:9, indent:IND}) : 0, cH = e.chose ? measure('You chose: '+e.chose, {size:10, indent:IND}) : 0;
+      var lH = 0; (e.lines||[]).forEach(function(l){ lH += measure(l, {size:9.5, indent:IND}); });
+      need(Math.min(hH + tH + cH + lH + 4, 300));
+      var top = y, pg = pages.length;
+      para(hdr, {size:10.5, bold:true, indent:IND});
+      if(tag) para(tag, {size:9, bold:true, indent:IND, color: COL[e.grade]||COL.muted});
+      if(e.chose) para('You chose: '+e.chose, {size:10, indent:IND});
+      (e.lines||[]).forEach(function(l){ para(l, {size:9.5, indent:IND, color:COL.muted}); });
+      if(pages.length===pg) box(M, y-2, 3, top-y, COL[e.grade]||COL.line);
+      y -= 10;
+    });
+    (sec.bullets||[]).forEach(function(b){
+      need(14); var startY = y; para(b, {size:9.5, indent:12}); txt(M+2, startY-9.5*1.38*0.72, enc('•'), false, 9.5, COL.muted); y -= 3; });
+    if(sec.note){ y -= 2; para(sec.note, {size:9, color:COL.muted}); }
+    y -= 6;
+  });
+  // verify
+  if(doc.verify){ need(50); y -= 6; var vh = measure(doc.verify, {size:9.5, indent:12, right:12}) + 16; need(vh); box(M, y-vh, CW, vh, COL.tint); box(M, y-vh, 3, vh, COL.aqua); y -= 8; para(doc.verify, {size:9.5, indent:12, right:12}); y -= 8; }
+
+  // footers
+  var N = pages.length;
+  pages.forEach(function(p, i){ var cur = ops; ops = p;
+    box(M, 44, CW, 0.6, COL.line);
+    txt(M, 32, enc(doc.game+'  ·  '+doc.code), false, 8, COL.muted);
+    var pb = enc('Page '+(i+1)+' of '+N); txt(PW-M-wOf(pb,false)*8/1000, 32, pb, false, 8, COL.muted);
+    if(doc.license) txt(M, 22, enc(doc.license), false, 7, COL.muted);
+    ops = cur; });
+
+  // assemble
+  var objs = [];
+  objs[1] = '<< /Type /Catalog /Pages 2 0 R >>';
+  objs[3] = '<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica /Encoding /WinAnsiEncoding >>';
+  objs[4] = '<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica-Bold /Encoding /WinAnsiEncoding >>';
+  var kids = [], n = 5;
+  pages.forEach(function(p){ var stream = p.join('\n'); objs[n+1] = '<< /Length '+stream.length+' >>\nstream\n'+stream+'\nendstream';
+    objs[n] = '<< /Type /Page /Parent 2 0 R /MediaBox [0 0 '+PW+' '+PH+'] /Resources << /Font << /F1 3 0 R /F2 4 0 R >> >> /Contents '+(n+1)+' 0 R >>';
+    kids.push(n+' 0 R'); n += 2; });
+  objs[2] = '<< /Type /Pages /Kids ['+kids.join(' ')+'] /Count '+pages.length+' >>';
+  objs[n] = '<< /Title '+pstr(enc(doc.game+' - '+doc.company))+' /Producer (ReportKit 1.0) /Creator '+pstr(enc(doc.game))+' >>';
+  var out = '%PDF-1.4\n%âãÏÓ\n', offs = [];
+  for(var k=1;k<=n;k++){ offs[k] = out.length; out += k+' 0 obj\n'+objs[k]+'\nendobj\n'; }
+  var xref = out.length;
+  out += 'xref\n0 '+(n+1)+'\n0000000000 65535 f \n';
+  for(k=1;k<=n;k++) out += ('0000000000'+offs[k]).slice(-10)+' 00000 n \n';
+  out += 'trailer\n<< /Size '+(n+1)+' /Root 1 0 R /Info '+n+' 0 R >>\nstartxref\n'+xref+'\n%%EOF\n';
+  var bytes = new Uint8Array(out.length); for(k=0;k<out.length;k++) bytes[k] = out.charCodeAt(k) & 255;
+  return bytes;
+}
+
+function download(bytes, filename){
+  var blob = new Blob([bytes], {type:'application/pdf'});
+  if(window.navigator && window.navigator.msSaveOrOpenBlob){ window.navigator.msSaveOrOpenBlob(blob, filename); return true; }
+  var url = URL.createObjectURL(blob), a = document.createElement('a');
+  a.href = url; a.download = filename; a.rel = 'noopener'; document.body.appendChild(a); a.click(); document.body.removeChild(a);
+  setTimeout(function(){ URL.revokeObjectURL(url); }, 30000);
+  return true;
+}
+
+/* ---------- run codes: PREFIX + base-32 digits + 3-digit check ---------- */
+var A = '0123456789ABCDEFGHJKMNPQRSTVWXYZ';
+function hash(s){ var h = 0x811c9dc5; for(var i=0;i<s.length;i++){ h ^= s.charCodeAt(i); h = Math.imul(h, 0x01000193) >>> 0; } return h; }
+function check(prefix, body){ var h = hash(prefix+':'+body) % 32768; return A[(h>>10)&31]+A[(h>>5)&31]+A[h&31]; }
+function encode(prefix, nums){
+  var body = nums.map(function(v){ if(v<0||v>31||v!==Math.floor(v)) throw new Error('run code value out of range: '+v); return A[v]; }).join('');
+  var all = body + check(prefix, body), parts = [];
+  for(var i=0;i<all.length;i+=4) parts.push(all.slice(i,i+4));
+  return prefix + '-' + parts.join('-');
+}
+function decode(prefix, code){
+  var s = String(code||'').toUpperCase().replace(/[^0-9A-Z]/g,'');
+  if(s.indexOf(prefix) !== 0) return {error:'That code isn\'t from this game. Codes from this game start with '+prefix+'.'};
+  s = s.slice(prefix.length).replace(/O/g,'0').replace(/[IL]/g,'1');
+  if(s.length < 4) return {error:'That code is too short. Check that you copied all of it.'};
+  var body = s.slice(0,-3), ck = s.slice(-3);
+  if(check(prefix, body) !== ck) return {error:'That code doesn\'t check out. It may have a typo, or it may have been changed.'};
+  return {nums: body.split('').map(function(c){ return A.indexOf(c); })};
+}
+
+/* ---------- UI ---------- */
+function esc(s){ return String(s).replace(/[&<>"']/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];}); }
+function stamp(){ var d = new Date(); return d.toLocaleString(undefined, {year:'numeric', month:'short', day:'numeric', hour:'numeric', minute:'2-digit'}); }
+function fileName(game, company){ var d = new Date(), p = function(n){ return (n<10?'0':'')+n; };
+  return (game+' - '+company).replace(/[^A-Za-z0-9 ._-]+/g,'').replace(/\s+/g,' ').trim()+' '+d.getFullYear()+'-'+p(d.getMonth()+1)+'-'+p(d.getDate())+'.pdf'; }
+
+/* The end-screen block. getDoc(name) returns the doc model. */
+function panel(o){
+  var id = 'rk'+Math.floor(Math.random()*1e6);
+  var h = '<div class="rk-panel" id="'+id+'">';
+  if(o.rebuilt) h += '<p class="rk-rebuilt"><b>Rebuilt from run code '+esc(o.code)+'.</b> This is the outcome that code produces. Compare it with the PDF you were given.</p>';
+  h += '<h3>Save your result</h3><div class="rk-row"><label class="rk-name">Your name <span class="note">(optional, printed on the PDF only)</span><input type="text" maxlength="80" autocomplete="name" spellcheck="false"></label>'+
+       '<button class="primary rk-dl" type="button">Download PDF</button><button class="linkbtn rk-pr" type="button">Print</button></div>'+
+       '<p class="rk-code note">Run code: <code>'+esc(o.code)+'</code> <button class="linkbtn rk-cp" type="button">Copy</button> <span class="rk-msg" aria-live="polite"></span></p>'+
+       '<p class="note rk-fine">The PDF is made in your browser. Nothing you type is stored or sent anywhere. The run code records your company and choices, so anyone can paste it into "Check a result" on the start screen and see the same outcome.</p></div>';
+  return {html:h, wire:function(){
+    var root = document.getElementById(id); if(!root) return;
+    var inp = root.querySelector('input'), msg = root.querySelector('.rk-msg');
+    root.querySelector('.rk-dl').onclick = function(){
+      try{ var doc = o.getDoc(plainName(inp.value)); doc.saved = stamp(); doc.code = o.code; doc.rebuilt = !!o.rebuilt;
+        download(pdf(doc), fileName(doc.game, doc.company)); msg.textContent = 'PDF downloaded.'; }
+      catch(e){ msg.textContent = 'The download didn\'t work here. Use Print and choose "Save as PDF".'; if(window.console) console.error(e); }
+    };
+    root.querySelector('.rk-pr').onclick = function(){ var n = plainName(inp.value); document.querySelectorAll('.rk-printname').forEach(function(el){ el.textContent = n ? 'Name: '+n : ''; }); window.print(); };
+    root.querySelector('.rk-cp').onclick = function(){ copy(o.code, msg); };
+  }};
+}
+function plainName(s){ return String(s||'').replace(/[\u0000-\u001f]/g,'').trim().slice(0,80); }
+function copy(text, out){
+  function fallback(){ var ta = document.createElement('textarea'); ta.value = text; ta.setAttribute('readonly',''); ta.style.position='fixed'; ta.style.opacity='0'; document.body.appendChild(ta); ta.select(); var ok=false; try{ ok = document.execCommand('copy'); }catch(e){} document.body.removeChild(ta); out.textContent = ok ? 'Copied.' : 'Select the code and copy it.'; }
+  try{ if(navigator.clipboard && window.isSecureContext){ navigator.clipboard.writeText(text).then(function(){ out.textContent='Copied.'; }, fallback); } else fallback(); }catch(e){ fallback(); }
+}
+/* The start-screen "Check a result" block. onCode(nums) rebuilds the run; return false or throw if the code doesn't fit. */
+function checker(prefix, onCode){
+  var id = 'rkc'+Math.floor(Math.random()*1e6);
+  var h = '<section class="sec rk-check" id="'+id+'"><h3>Check a result</h3><p class="note" style="margin:0 0 8px">Paste a run code from someone\'s PDF to rebuild that exact outcome.</p>'+
+    '<div class="rk-row"><label class="rk-name"><span class="rk-sr">Run code</span><input type="text" placeholder="'+prefix+'-…" autocomplete="off" spellcheck="false" aria-label="Run code"></label><button class="linkbtn rk-go" type="button">Rebuild</button></div><p class="rk-msg note" aria-live="polite"></p></section>';
+  return {html:h, wire:function(){
+    var root = document.getElementById(id); if(!root) return;
+    var inp = root.querySelector('input'), msg = root.querySelector('.rk-msg');
+    function go(){ var r = decode(prefix, inp.value); if(r.error){ msg.textContent = r.error; return; }
+      var ok = false; try{ ok = onCode(r.nums, normalize(prefix, r.nums)) !== false; }catch(e){ ok = false; if(window.console) console.error(e); }
+      if(!ok) msg.textContent = 'That code doesn\'t match any run of this version of the game.'; }
+    root.querySelector('.rk-go').onclick = go;
+    inp.onkeydown = function(e){ if(e.key==='Enter') go(); };
+  }};
+}
+function normalize(prefix, nums){ return encode(prefix, nums); }
+
+var CSS = '.rk-panel{margin-top:18px;padding:16px 18px;border:1px solid var(--line);border-left:4px solid var(--aqua);background:var(--panel);border-radius:6px}'+
+  '.rk-panel h3{margin:0 0 10px;font-size:20px}.rk-row{display:flex;flex-wrap:wrap;gap:10px 14px;align-items:flex-end}'+
+  '.rk-name{display:flex;flex-direction:column;gap:4px;font-size:14px;font-weight:600;flex:1 1 240px;max-width:360px}'+
+  '.rk-name input{font:inherit;font-weight:400;font-size:16px;padding:8px 10px;border:1px solid var(--line);border-radius:4px;background:var(--panel);color:var(--ink);width:100%}'+
+  '.rk-name input:focus-visible{outline:2px solid var(--aqua);outline-offset:1px}'+
+  '.rk-code{margin:12px 0 0}.rk-code code{font-family:var(--f-mono);font-size:15px;font-weight:600;color:var(--ink);letter-spacing:.02em;word-break:break-all}'+
+  '.rk-panel .primary{background:var(--aqua);padding:10px 18px;font-size:15px}.rk-fine{margin:8px 0 0;font-size:13px}.rk-rebuilt{margin:0 0 12px;padding:8px 12px;background:var(--amber-soft);border-radius:4px;font-size:14px}'+
+  '.rk-check{margin-top:28px}.rk-check h3{font-size:20px;margin:0 0 4px}.rk-check .rk-msg{margin:8px 0 0;min-height:1em}.rk-sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}'+
+  '.rk-printname{display:none}'+
+  '@media print{.rk-panel .rk-row,.rk-panel .rk-cp,.rk-panel .rk-msg,.rk-panel h3,.rk-panel .rk-fine,.rk-check{display:none!important}.rk-panel{border:none;padding:0}.rk-printname{display:block}}';
+(function(){ var st = document.createElement('style'); st.textContent = CSS; document.head.appendChild(st); })();
+
+return {pdf:pdf, download:download, encode:encode, decode:decode, panel:panel, checker:checker, plain:plain, stamp:stamp,
+        LICENSE:'© 2026 Chuck Kesler · CC BY-NC 4.0'};
+})();
+</script>
+<script>
+(function(){
+"use strict";
+var M = {rep:'Reporting', exp:'Exposure', tru:'Trust'};
+var HINT = {rep:'higher is better', exp:'lower is better', tru:'higher is better'};
+var BUDGET = {1:5, 2:3, 3:0, 4:0};
+var QNAME = {1:'Q1 · Foundations', 2:'Q2 · Practice', 3:'Q3 · Pressure', 4:'Q4 · The real thing'};
+var LURE = {easy:{rate:4, name:'an easy fake password notice'}, inv:{rate:14, name:'a realistic vendor invoice'}, bonus:{rate:28, name:'a holiday-bonus email'}};
+
+var C = [
+ {id:'harbor', name:'Harbor Ridge Health', tag:'Health care', sector:'Regional health system · Norfolk, Virginia',
+  blurb:'Three hospitals, forty clinics and about 9,000 employees, from surgeons to schedulers.',
+  twistWho:'Harbor Ridge\'s cyber insurer', twist:'The renewal questionnaire from Harbor Ridge\'s cyber insurer asks whether you run simulated phishing tests at least quarterly, and the broker says a "no" will raise the premium.',
+  press:['mfa','snoop'], live:'misdirect'},
+ {id:'pine', name:'Pinecrest Outfitters', tag:'Retail', sector:'Outdoor retailer · publicly traded · Asheville, NC',
+  blurb:'Two hundred stores, a busy e-commerce site, and thousands of seasonal staff every November.',
+  twistWho:'Pinecrest\'s cyber insurer', twist:'The renewal questionnaire from Pinecrest\'s cyber insurer asks whether you run simulated phishing tests at least quarterly, and the broker says a "no" will raise the premium.',
+  press:['monitor','giftcard'], live:'helpdesk'},
+ {id:'lark', name:'Larkspur HR', tag:'Software', sector:'HR and benefits software vendor · Denver, CO',
+  blurb:'About 900 employees, 1,400 business customers in the US and the EU, and a lot of their employees\' data.',
+  twistWho:'Larkspur\'s largest customer', twist:'Larkspur\'s largest customer, a bank, has added a clause to its renewal: Larkspur must run simulated phishing tests on its staff at least quarterly and report the results. The contract is worth a tenth of Larkspur\'s revenue.',
+  press:['shadow','mfa'], live:'deepfake'}
+];
+
+/* ---------- steps ----------
+   Each choice: t, v (best/ok/poor), cost, fx, set, r (what happens), l (lesson), ref (where it comes from). */
+var S = [
+ {id:'train', q:1, title:'Training for the year', text:function(){ return '<p>Leadership wants a training completion number for the board, and the auditors will ask for evidence. You have five budget points for the quarter, and not everything you\'d like will fit.</p>'; },
+  choices:[
+   {t:'An annual 45-minute online module for everyone, tracked to 98% completion and reported to the board.', v:'ok', cost:1, fx:{exp:-3,tru:-2}, set:{annual:1},
+    r:'Completion hits 98% and the auditors are satisfied. Nobody can tell you whether anyone behaves differently.', l:'A completion report is the easiest evidence for an auditor. A large field study (UC San Diego, 2025) found annual training had no measurable link to who fell for a phish.', ref:'Training requirements (HIPAA, PCI DSS, GLBA) · UC San Diego (2025) and ETH Zurich (2022) studies'},
+   {t:'Short sessions for the roles attackers target, plus a 10-minute baseline for everyone.', v:'best', cost:2, fx:{exp:-8,rep:3,tru:3}, set:{role:1},
+    r:'The help desk learns to verify before resets, finance learns to call back on a known number, and the baseline still satisfies the auditors.', l:'Attackers target specific roles. Short, specific and repeated training beats long and general.', ref:'Role-based awareness'},
+   {t:'Skip formal training this year and put the budget into tools.', v:'poor', cost:0, fx:{exp:5}, set:{notrain:1},
+    r:'The next assessment flags it immediately. Nearly every framework and regulation you\'re subject to requires awareness training.', l:'Training isn\'t enough on its own, and it\'s still required. The question is what kind.', ref:'Training requirements (HIPAA, PCI DSS, GLBA)'}]},
+ {id:'button', q:1, title:'How people report', text:function(){ return '<p>Right now, people who see something suspicious are supposed to "let IT know." Nobody knows how many do.</p>'; },
+  choices:[
+   {t:'A one-click report button, with an analyst who answers every report within the hour.', v:'best', cost:2, fx:{rep:20,exp:-6,tru:5}, set:{button:2},
+    r:'Reports start arriving within weeks, and people who get a quick, friendly answer report again.', l:'A report button turned employees into an early-warning system in the ETH Zurich study. Someone has to answer, or people stop.', ref:'UC San Diego (2025) and ETH Zurich (2022) studies · Measuring awareness (NIST SP 800-50r1)'},
+   {t:'A report button that sends reports to a shared mailbox the team checks when it has time between other work.', v:'ok', cost:1, fx:{rep:8,exp:-2,tru:-2}, set:{button:1},
+    r:'Reports come in, then pile up. After a few unanswered reports, people stop bothering.', l:'A button without a response teaches people that reporting doesn\'t matter.', ref:'Measuring awareness (NIST SP 800-50r1)'},
+   {t:'Tell people to forward anything suspicious to the IT help desk.', v:'poor', cost:0, fx:{rep:3}, set:{button:0},
+    r:'A handful of forwards a month, mixed in with password resets. You have no idea how many phishes nobody mentioned.', l:'If reporting is hard, people don\'t do it, and you lose your detection network.', ref:'Security fatigue (NIST, 2016)'}]},
+ {id:'friction', q:1, title:'Fix a friction point', text:function(){ return '<p>Staff juggle dozens of passwords, and the help desk spends a third of its time on resets.</p>'; },
+  choices:[
+   {t:'A password manager, passkeys and single sign-on for the main apps.', v:'best', cost:2, fx:{exp:-10,tru:4}, set:{friction:1},
+    r:'Fewer passwords, fewer resets, and a login that can\'t be phished for the main apps.', l:'Make the secure way the easy way. Fewer security decisions and a simple right action beat reminders.', ref:'Security fatigue (NIST, 2016) · UK NCSC phishing guidance'},
+   {t:'A poster and email campaign about choosing strong passwords.', v:'ok', cost:1, fx:{exp:-1}, set:{},
+    r:'The posters look good. Password habits don\'t change much.', l:'More posters above the waterline don\'t change what\'s below it.', ref:'Security culture (UK NCSC)'},
+   {t:'Require everyone to change their password every 60 days, with a reminder a week before.', v:'poor', cost:0, fx:{exp:2,tru:-4}, set:{},
+    r:'People add a number to the end of the same password, and resets go up.', l:'NIST\'s password guidance says not to force periodic changes, because they push people toward weaker, predictable passwords.', ref:'NIST SP 800-63B'}]},
+ {id:'approach', q:2, title:'Practice: how do people learn to spot phishing?', text:function(){ return '<p>Leadership asks how you\'ll know whether people can spot phishing. You have three budget points this quarter.</p>'; },
+  choices:[
+   {t:'Spot the Phish: a quiz of real, sanitized phishes mixed with real email, with a prize drawing.', v:'best', cost:1, fx:{rep:8,tru:8,exp:-4}, set:{spot:1},
+    r:'A third of the company takes the quiz in the first week. People practice on real phishing, and nobody is tricked.', l:'Practice without tricks, and the security team is the one handing out prizes. That\'s awareness training, and it builds trust.', ref:'Awareness without tricks'},
+   {t:'Monthly simulated phishing tests, with a click-rate dashboard by department and a target for next year.', v:'ok', cost:2, fx:{rep:2,tru:-6,exp:-1}, set:{sim:1},
+    r:'Leadership gets a click rate every month. Some staff start to feel the security team is out to catch them.', l:'Simulated tests produce easy numbers. Two large field studies found the "you clicked" lessons changed behavior very little.', ref:'UC San Diego (2025) and ETH Zurich (2022) studies · Simulated phishing tests'},
+   {t:'Do both: Spot the Phish and monthly simulated tests.', v:'ok', cost:3, fx:{rep:8,tru:-2,exp:-4}, set:{spot:1, sim:1},
+    r:'You get the quiz\'s goodwill and a click rate, and you spend the whole quarter\'s budget doing it.', l:'Defensible, but the tests cost trust and budget for a number that depends heavily on which email you sent.', ref:'Simulated phishing tests'}]},
+ {id:'lure', q:2, when:function(s){ return s.sim && !s.lure; }, title:'Pick the test email', text:function(){ return '<p>Your simulated tests need a fake email. Leadership will see the click rate.</p>'; },
+  choices:[
+   {t:'An easy one: a clumsy "your password expires" notice with obvious typos.', v:'ok', cost:0, fx:{}, set:{lure:'easy'},
+    r:'Almost nobody clicks. Leadership is delighted.', l:'An easy lure makes the click rate look great without telling you much.', ref:'Click rates (UC San Diego, 2025)'},
+   {t:'A realistic vendor invoice, like the ones accounts payable sees daily.', v:'best', cost:0, fx:{exp:-2}, set:{lure:'inv'},
+    r:'More people click than leadership would like, and the results tell you which teams need help.', l:'A realistic, relevant lure measures something useful, as long as you report it honestly.', ref:'Click rates (UC San Diego, 2025)'},
+   {t:'A tough one: a holiday-bonus email from "HR".', v:'poor', cost:0, fx:{tru:-15}, set:{lure:'bonus'},
+    r:'A lot of people click, and they\'re furious when they find out the bonus was fake.', l:'GoDaddy\'s 2020 holiday-bonus test is the cautionary example. Lures about pay or benefits cost trust you don\'t get back.', ref:'Simulated phishing tests'}]},
+ {id:'clickers', q:2, title:'When someone clicks', text:function(){ return '<p>Someone clicks a phishing link, real or simulated. What happens next is a policy decision, and everyone will hear about it.</p>'; },
+  choices:[
+   {t:'A private conversation and a short lesson. No names shared.', v:'best', cost:0, fx:{rep:4,tru:4}, set:{clickers:'coach'},
+    r:'People who click start telling you, because nothing bad happens when they do.', l:'Psychological safety: people speak up about mistakes when they don\'t fear being punished for it.', ref:'Psychological safety'},
+   {t:'Mandatory hour-long retraining for anyone who clicks.', v:'ok', cost:0, fx:{rep:-2,tru:-4}, set:{clickers:'retrain'},
+    r:'Clicking now costs an hour, so some people quietly stop mentioning it.', l:'A penalty for clicking is a penalty for admitting it.', ref:'Psychological safety'},
+   {t:'A monthly leaderboard by department, with the names of repeat clickers.', v:'poor', cost:0, fx:{rep:-8,tru:-12}, set:{clickers:'shame'},
+    r:'Nobody wants to be on the list. Clicks still happen; reports of them stop.', l:'Shaming makes people hide mistakes, which turns a two-minute fix into a forty-day discovery.', ref:'Psychological safety'}]},
+ {id:'reporters', q:2, title:'When someone reports', text:function(){ return '<p>Reports are starting to come in. How do you respond to the people who send them?</p>'; },
+  choices:[
+   {t:'Thank them personally, and enter them in a monthly prize drawing.', v:'best', cost:1, fx:{rep:8,tru:4}, set:{celebrate:1},
+    r:'Reporting becomes something people talk about at lunch.', l:'Celebrate the people who report. Reporting rate is the number that matters.', ref:'Measuring awareness (NIST SP 800-50r1)'},
+   {t:'An automatic "ticket received" reply.', v:'ok', cost:0, fx:{}, set:{},
+    r:'People know their report arrived, and not much else.', l:'Better than nothing. People report more when they hear what their report caught.', ref:'Measuring awareness (NIST SP 800-50r1)'},
+   {t:'Nothing. Reporting is part of everyone\'s job, and it shouldn\'t need a reward.', v:'poor', cost:0, fx:{rep:-4}, set:{},
+    r:'Reports trickle off over the quarter.', l:'Behavior that isn\'t noticed tends to fade.', ref:'Leadership and incentives'}]},
+ {id:'twist', q:2, title:'A requirement arrives', text:function(s, co){ return '<p>'+co.twist+'</p>'+(s.sim?'<p>You already run simulated tests. Now the program has to stand up to scrutiny from someone outside the company.</p>':'<p>You chose not to run simulated tests. Now you have to.</p>'); },
+  choices:[
+   {t:'Agree it with HR, no pay or benefit lures, coach privately, and celebrate reports.', v:'best', cost:0, fx:{exp:-1}, set:{sim:1, lure:'inv', twist:'careful', clickers:'coach'},
+    r:'You meet the requirement and keep the trust you\'ve built. HR is on your side when someone complains.', l:'Controls come from risk, regulation and contracts. Meeting a requirement makes you compliant; how you run it decides whether it costs trust.', ref:'Simulated phishing tests · Risk, regulation and contracts'},
+   {t:'Buy the vendor\'s standard package and send its default templates every month.', v:'ok', cost:0, fx:{tru:-4}, set:{sim:1, lure:'easy', twist:'default'},
+    r:'The requirement is met on paper, and the default templates are so easy that the click rate looks wonderful.', l:'Compliant, and not much more. An easy template produces a number that measures the template.', ref:'Click rates (UC San Diego, 2025)'},
+   {t:'Start with a holiday-bonus email to get an honest baseline.', v:'poor', cost:0, fx:{tru:-15}, set:{sim:1, lure:'bonus', twist:'bonus'},
+    r:'The baseline is terrible and so is the reaction. Two managers escalate to HR.', l:'A pay or benefits lure is the GoDaddy mistake, and it costs the trust your reporting depends on.', ref:'Simulated phishing tests'}]},
+ {id:'mfa', q:3, when:function(s, co){ return co.press.indexOf('mfa')>=0; }, title:'An executive wants an exception', text:function(s, co){ return '<p>The chief financial officer asks to be exempted from multi-factor authentication. "It slows me down, and I\'m the last person anyone would phish."</p>'; },
+  choices:[
+   {t:'Say no, and set her up with a passkey so signing in takes one touch.', v:'best', cost:0, fx:{exp:-3,tru:2}, set:{},
+    r:'She grumbles, tries the passkey, and admits it\'s faster than her password.', l:'Leaders have to model it, or nobody will. Making the secure way easy makes "no" much easier to hear.', ref:'Leadership and incentives'},
+   {t:'Grant a 90-day exception with extra monitoring on her account.', v:'ok', cost:0, fx:{exp:4}, set:{},
+    r:'Ninety days becomes a year. Two other executives ask for the same thing.', l:'Exceptions for important people teach everyone that the rule is optional.', ref:'Leadership and incentives'},
+   {t:'Grant it. She\'s the CFO, and it isn\'t worth a fight with someone that senior.', v:'poor', cost:0, fx:{exp:8,tru:-6}, set:{},
+    r:'Finance hears about it within a week.', l:'The most-targeted person in the company now has the weakest login.', ref:'Leadership and incentives · Role-based awareness'}]},
+ {id:'snoop', q:3, when:function(s, co){ return co.press.indexOf('snoop')>=0; }, title:'A celebrity patient', text:function(){ return '<p>A local celebrity is admitted. The access log shows a scheduler and two nurses on other floors opened the record. None of them had a reason to.</p>'; },
+  choices:[
+   {t:'Investigate under the policy, apply the same sanction regardless of role, and remind staff access is audited.', v:'best', cost:0, fx:{exp:-5,tru:2}, set:{},
+    r:'Staff notice that the rule applied to everyone. Curiosity lookups drop.', l:'Authorized access, wrong purpose. Privacy culture means consistent rules and knowing that access is watched.', ref:'Privacy culture'},
+   {t:'Have a quiet word with each of them and leave it there, since nothing left the hospital.', v:'ok', cost:0, fx:{exp:2}, set:{},
+    r:'The three are embarrassed. Everyone else learns nothing.', l:'Inconsistent consequences send a mixed message about whether the rule is real.', ref:'Privacy culture'},
+   {t:'Send an all-staff email naming the three as a warning.', v:'poor', cost:0, fx:{tru:-10}, set:{},
+    r:'The union files a grievance, and staff start saying the security team is out to get them.', l:'Shaming damages trust without making the rule any clearer.', ref:'Psychological safety'}]},
+ {id:'monitor', q:3, when:function(s, co){ return co.press.indexOf('monitor')>=0; }, title:'HR wants to watch screens', text:function(){ return '<p>HR asks you to turn on screen recording and keystroke logging in the security tools, to measure how productive head-office staff are.</p>'; },
+  choices:[
+   {t:'Ask what problem it solves, and propose team-level measures that employees are told about.', v:'best', cost:0, fx:{tru:4}, set:{},
+    r:'HR agrees to start with team-level measures. Employees see the security team protecting them.', l:'Is it proportionate, do employees know, and do we keep only what we need? Security tools used to spy on people cost the program its trust.', ref:'Employee monitoring'},
+   {t:'Approve it, with a line about monitoring added to the employee handbook.', v:'ok', cost:0, fx:{tru:-6}, set:{},
+    r:'It\'s technically disclosed. Staff who notice are not reassured.', l:'Transparency matters, but it doesn\'t make a disproportionate practice proportionate.', ref:'Employee monitoring'},
+   {t:'Approve it quietly. The security tools can already do it.', v:'poor', cost:0, fx:{tru:-15}, set:{},
+    r:'Someone finds out. Reporting to the security team drops as word spreads.', l:'If employees think security tools are there to spy on them, they stop trusting the security team.', ref:'Leadership and incentives · Employee monitoring'}]},
+ {id:'giftcard', q:3, when:function(s, co){ return co.press.indexOf('giftcard')>=0; }, title:'Gift-card calls to the stores', text:function(){ return '<p>Seasonal store staff are getting calls from someone posing as a district manager, telling them to buy gift cards for an "urgent customer issue" and read out the numbers.</p>'; },
+  choices:[
+   {t:'Brief store managers: the company never pays in gift cards, and you call back on the district number.', v:'best', cost:0, fx:{exp:-6,rep:3}, set:{},
+    r:'Two stores report the next call instead of buying the cards.', l:'Short, specific and repeated, aimed at the role being targeted, with a verification habit.', ref:'Role-based awareness · Verification habits (FBI, May 2025)'},
+   {t:'Add a detailed section on gift-card scams to next year\'s annual module, with real examples from this season.', v:'ok', cost:0, fx:{exp:1}, set:{},
+    r:'The calls continue through the holidays. Next year\'s module will be very thorough.', l:'Too late and too general for a scam that\'s happening now.', ref:'Role-based awareness'},
+   {t:'Post a warning in the break rooms.', v:'ok', cost:0, fx:{exp:-1}, set:{},
+    r:'A few people read it. Seasonal staff mostly don\'t use the break room.', l:'A poster is better than nothing, but it rarely reaches the people being called.', ref:'Security culture (UK NCSC)'}]},
+ {id:'shadow', q:3, when:function(s, co){ return co.press.indexOf('shadow')>=0; }, title:'Customer data in a personal AI account', text:function(){ return '<p>A developer pasted a sample of an EU customer\'s employee records into a personal AI chatbot account to debug an import job.</p>'; },
+  choices:[
+   {t:'Provide an approved AI tool under a no-training agreement, and say what never goes into any AI tool.', v:'best', cost:0, fx:{exp:-6,tru:3}, set:{},
+    r:'Usage moves to the approved tool within a month, where you can see it.', l:'Banning tends to push use onto personal accounts. Giving people an approved tool brings it back where you can see it.', ref:'Security fatigue (NIST, 2016) · Role-based awareness'},
+   {t:'Ban all AI tools on company devices.', v:'poor', cost:0, fx:{exp:3,tru:-6}, set:{},
+    r:'Developers switch to their phones.', l:'A ban without an alternative moves the problem out of sight.', ref:'Security fatigue (NIST, 2016)'},
+   {t:'Remind the developer of the acceptable use policy, and have the team re-read and re-sign it this week.', v:'ok', cost:0, fx:{exp:1}, set:{},
+    r:'The developer apologizes. Nothing else changes.', l:'A rule that people can\'t follow and still do their jobs isn\'t really a rule.', ref:'UK NCSC culture principles'}]},
+ {id:'live', q:4, title:'The real thing', live:true, text:function(s, co){ return LIVE[co.live].text; },
+  choices:function(s, co){ return LIVE[co.live].choices; }},
+ {id:'metric', q:4, title:'Your year-end report to the CEO', text:function(){ return '<p>The CEO asks for one number to lead with when she reports to the board on the human side of security.</p>'; },
+  choices:[
+   {t:'Training completion: 98%.', v:'poor', cost:0, fx:{}, set:{},
+    r:'The board nods. Nobody learns anything about whether people behave differently.', l:'Completion is easy to count and tells you very little about behavior.', ref:'Measuring awareness (NIST SP 800-50r1)'},
+   {t:'The simulated phishing click rate, with its trend over the last four quarters.', v:'poor', cost:0, fx:{}, set:{},
+    r:'It looks fine. Then a director asks what the test emails looked like.', l:'The click rate depends heavily on which email you sent, as the debrief shows.', ref:'Click rates (UC San Diego, 2025)'},
+   {t:'Reporting rate and time from first report to response.', v:'best', cost:0, fx:{}, set:{},
+    r:'The board can see whether people act when something real arrives, and how fast you respond.', l:'Count the reports, not just the clicks. That\'s where the ETH Zurich study and the NCSC say the value is.', ref:'Measuring awareness (NIST SP 800-50r1)'}]}
+];
+
+/* The live event: how it plays out depends on what you built. */
+var LIVE = {
+ misdirect:{label:'A spreadsheet goes to the wrong address',
+  text:'<p>A billing analyst emails a spreadsheet of 2,000 patients\' names and balances to an outside address with a name close to a colleague\'s. She notices ten minutes later.</p>',
+  score:function(s){ return (s.button===2?1:0) + (s.clickers==='coach'?1:0) + (s.role?1:0) + (s.celebrate?1:0); },
+  out:['She reports it within minutes. Your team reaches the recipient, who confirms deletion in writing, and privacy counsel has a clean timeline for the breach assessment.',
+       'She tells her manager the next morning. Your team reaches the recipient, but the delay complicates the breach assessment.',
+       'She says nothing, worried about what happens to people who make mistakes. A patient calls three weeks later, after the recipient contacted them.'],
+  choices:[
+   {t:'Contact the recipient, document everything, and bring in privacy counsel.', v:'best', fx:{exp:-4}, r:'Counsel can complete the breach risk assessment with a documented timeline, however late it started.', l:'Honest mistakes are among the most common privacy incidents. Fast, documented handling is what limits the harm.', ref:'Privacy culture'},
+   {t:'Discipline the analyst so everyone knows mistakes have consequences.', v:'poor', fx:{tru:-10,rep:-6}, r:'Everyone learns to keep quiet next time.', l:'Punishing an honest mistake guarantees the next one won\'t be reported.', ref:'Psychological safety'},
+   {t:'Add an email warning when patient data is sent outside the hospital, and leave the rest to her manager.', v:'ok', fx:{exp:-3}, r:'A good control for next time, though it doesn\'t deal with this one.', l:'A prompt at the moment of risk often beats training. Pair it with handling this incident properly.', ref:'Role-based awareness · UK NCSC phishing guidance'}]},
+ helpdesk:{label:'A call to the help desk',
+  text:'<p>A caller claiming to be a regional manager phones the help desk on a Saturday. He\'s locked out, he says, the stores open in an hour, and he needs his password and MFA reset now.</p>',
+  score:function(s){ return (s.role?2:0) + (s.friction?1:0) + (s.clickers==='coach'?1:0); },
+  out:['The agent follows the verification procedure from the role-based session and calls back on the number in the directory. The real manager is asleep at home. The caller hangs up.',
+       'The agent hesitates but resets the password, then gets uneasy and reports it within the hour. You lock the account before the caller gets far.',
+       'The agent resets the password and the MFA. The caller is inside the network within the hour, and nobody says anything until Monday.'],
+  choices:[
+   {t:'Walk every help-desk team through the call, without blame, and make call-backs mandatory.', v:'best', fx:{rep:5,tru:3,exp:-3}, r:'Every agent hears the story by Monday, and calling back before a reset becomes routine.', l:'Learn from it without blame, and make the right step the required one. Help desks are where several major attacks of recent years began.', ref:'Role-based awareness'},
+   {t:'Add a line about social engineering to the annual module.', v:'ok', fx:{}, r:'It\'s in the module. The agents who need it most may not get to it before the next call.', l:'Too general and too slow for a role that\'s being targeted right now.', ref:'Role-based awareness'},
+   {t:'Require two managers to approve every reset from now on, including on weekends and holidays.', v:'ok', fx:{tru:-3}, r:'Resets slow to a crawl, and staff start sharing passwords to avoid them.', l:'A control that gets in the way of work invites workarounds.', ref:'Security fatigue (NIST, 2016)'}]},
+ deepfake:{label:'The CFO calls',
+  text:'<p>An accounts payable specialist gets a call that sounds exactly like the CFO. A confidential acquisition is closing, she says, and a $480,000 wire has to go to a new account in the next hour. "Don\'t loop anyone else in yet."</p>',
+  score:function(s){ return (s.role?2:0) + (s.button===2?1:0) + (s.clickers==='coach'?1:0); },
+  out:['The specialist hangs up and calls the CFO back on the number in the directory. The CFO is in a board meeting and knows nothing about it. No money moves.',
+       'The specialist starts the wire, then gets uneasy and asks a colleague, who stops it before it\'s released.',
+       'The specialist sends the wire. By the time anyone checks, the money has been moved out of the receiving account.'],
+  choices:[
+   {t:'Make call-backs official for every payment change, and share the story at the next all-hands.', v:'best', fx:{exp:-4,rep:4}, r:'Finance adopts it immediately. Other teams start using callbacks too.', l:'Verify, don\'t trust the voice: call back on a number you already have. These habits only work if it\'s safe to make the CFO wait.', ref:'Verification habits (FBI, May 2025)'},
+   {t:'Buy a deepfake-detection tool for the phone system and train finance on how its alerts work.', v:'ok', fx:{exp:-1}, r:'It flags some calls. The next one comes by video.', l:'You can\'t count on spotting a good deepfake. The defense is verification habits.', ref:'Verification habits (FBI, May 2025)'},
+   {t:'Remind finance to listen carefully for anything odd about a caller\'s voice.', v:'poor', fx:{}, r:'Nobody can tell the difference.', l:'Calling back on a known number is the control.', ref:'Verification habits (FBI, May 2025)'}]}
+};
+
+/* ---------- engine ---------- */
+var app = document.getElementById('app'), homeBtn = document.getElementById('homeBtn');
+var co, st, meters, picks, cur, spent, liveLvl = null, armed = false;
+function esc(s){ return String(s).replace(/[&<>"]/g, function(c){ return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]; }); }
+function clamp(n){ return Math.max(0, Math.min(100, n)); }
+function shuffle(a){ for(var q=a.length-1;q>0;q--){ var w=Math.floor(Math.random()*(q+1)), t=a[q]; a[q]=a[w]; a[w]=t; } return a; }
+function shortOf(t){ var s = t.split(/[.:;,]/)[0]; return s.length>60 ? s.slice(0,58)+'…' : s; }
+function choicesOf(step){ return typeof step.choices==='function' ? step.choices(st, co) : step.choices; }
+function nextStep(from){ for(var k=from;k<S.length;k++){ var s = S[k]; if(!s.when || s.when(st, co)) return k; } return -1; }
+function left(q){ return BUDGET[q] - (spent[q]||0); }
+function clickRate(){ return st.sim && st.lure ? LURE[st.lure].rate : null; }
+
+function intro(){
+  homeBtn.hidden = true;
+  var h = '<section class="intro"><div><span class="eyebrow">About 12 to 15 minutes</span><h2>You own the human side of security now.</h2><p class="lede">You\'ve just been put in charge of security awareness and culture at your company. You have a year and a limited budget. Leadership wants a training completion number. Attackers don\'t care about that number.</p><div class="row"><button class="primary" id="go">Start a random scenario</button><span class="note">Each play picks one of three companies.</span></div></div>'+
+  '<aside class="rules"><h3>How it works</h3><ul><li>Four quarters. Each one has a few decisions, and the first two come with a small budget.</li><li>Your choices move three meters: <b>reporting</b> (how many people report suspicious things, and how fast), <b>exposure</b> (how likely a human-driven incident is to succeed) and <b>trust</b> (staff goodwill toward the security team).</li><li>Leadership watches a fourth number, the <b>click rate</b>, if you run simulated phishing tests.</li><li>Halfway through, someone outside the company makes a demand. In the last quarter, something real happens.</li></ul><p class="note" style="margin:10px 0 0">Everything stays in your browser. Nothing you choose or type is stored or sent anywhere.</p></aside></section>'+
+  '<section class="sec"><h3>Or pick a company</h3><div class="cases">';
+  C.forEach(function(c,i){ h += '<button class="case" data-i="'+i+'"><span class="tag">'+esc(c.tag)+'</span><h3>'+esc(c.name)+'</h3><p>'+esc(c.sector)+'</p><p>'+esc(c.blurb)+'</p></button>'; });
+  h += '</div><p class="note" style="margin-top:14px">The companies are invented, and are the same three as in <i>The 2AM Page</i>, <i>Keys to the Agent</i> and <i>Ship It?</i>. The research and cases in the debrief are real.</p></section>';
+  var ck = ReportKit.checker(CODE, replay); h += ck.html;
+  app.innerHTML = h; ck.wire();
+  document.getElementById('go').onclick = function(){ start(Math.floor(Math.random()*C.length)); };
+  [].forEach.call(app.querySelectorAll('.case'), function(b){ b.onclick = function(){ start(+b.getAttribute('data-i')); }; });
+  window.scrollTo(0,0);
+}
+function begin(i){
+  co = C[i]; st = {}; picks = []; spent = {}; liveLvl = null;
+  meters = {rep:20, exp:60, tru:50};
+  cur = nextStep(0); homeBtn.hidden = false;
+}
+function start(i){ begin(i); scene(); }
+
+function meterHTML(k){
+  var v = meters[k], hi = (k!=='exp'), good = hi ? v>=60 : v<=40, bad = hi ? v<40 : v>65;
+  var col = good ? 'var(--good)' : bad ? 'var(--red)' : 'var(--amber)';
+  return '<div class="meter"><div class="lab"><span>'+M[k]+' <span class="hint">('+HINT[k]+')</span></span><b>'+v+'</b></div><div class="bar" role="progressbar" aria-label="'+M[k]+'" aria-valuemin="0" aria-valuemax="100" aria-valuenow="'+v+'"><i style="width:'+v+'%;background:'+col+'"></i></div></div>';
+}
+function rail(){
+  var q = cur>=0 ? S[cur].q : 4, cr = clickRate();
+  var h = '<aside class="rail"><div class="board"><div class="eyebrow">Your program</div><div class="co" style="margin-top:6px">'+esc(co.name)+'</div><div class="co-sub">'+esc(co.sector)+'</div>'+meterHTML('rep')+meterHTML('exp')+meterHTML('tru');
+  h += '<div class="watch"><span class="eyebrow">Leadership watches</span><div class="lab"><span>Click rate on simulated tests</span><b>'+(cr===null?'none run':cr+'%')+'</b></div></div>';
+  if(BUDGET[q]) h += '<div class="budgetbox"><span class="eyebrow">'+QNAME[q]+' budget</span><b>'+left(q)+' of '+BUDGET[q]+' points left</b></div>';
+  h += '</div><div class="board"><h3>Decision log</h3><ul class="log" aria-live="polite">';
+  if(!picks.length) h += '<li><span class="empty">No entries yet.</span></li>';
+  picks.forEach(function(p){ var c = p.v==='best'?'var(--good)':p.v==='ok'?'var(--amber)':'var(--red)';
+    h += '<li><time>'+esc(p.when)+'</time><span><span class="dot" style="background:'+c+'"></span>'+esc(p.short)+'</span></li>'; });
+  return h + '</ul></div></aside>';
+}
+function refreshRail(){ var tmp = document.createElement('div'); tmp.innerHTML = rail(); var r = app.querySelector('.rail'); if(r) r.innerHTML = tmp.querySelector('.rail').innerHTML; }
+function progress(){
+  var h = '<div class="progress" aria-hidden="true">';
+  [1,2,3,4].forEach(function(q){ var now = cur>=0 && S[cur].q===q, done = cur<0 || S[cur].q>q; h += '<span class="'+(done?'done':now?'now':'')+(q===4?' live':'')+'"></span>'; });
+  return h + '</div>';
+}
+
+function resolveLive(){ var L = LIVE[co.live], sc = L.score(st); liveLvl = sc>=3 ? 0 : sc>=1 ? 1 : 2; meters.exp = clamp(meters.exp + (liveLvl===2?15:liveLvl===1?5:-5)); return liveLvl; }
+function scene(){
+  var step = S[cur], ch = choicesOf(step), q = step.q, lvl = null;
+  if(step.live && liveLvl===null) lvl = resolveLive(); else if(step.live) lvl = liveLvl;
+  var h = '<div class="game"><section class="scene"><div class="scene-head"><span class="clock">'+esc(QNAME[q])+'</span><span class="step">'+(BUDGET[q]?left(q)+' budget points left':'No budget this quarter')+'</span></div><div class="scene-body"><h2>'+esc(step.live?LIVE[co.live].label:step.title)+'</h2>'+step.text(st, co);
+  if(step.live){ var labs = ['A near miss','Caught late','It got through']; h += '<div class="outcome l'+lvl+'"><span class="verdict">'+labs[lvl]+'</span><p>'+esc(LIVE[co.live].out[lvl])+'</p></div><p class="ask">What do you do now?</p>'; }
+  h += '<div class="choices">';
+  shuffle(ch.map(function(_,j){ return j; })).forEach(function(j,n){ var c = ch[j], cost = c.cost||0, afford = cost <= left(q) || !BUDGET[q];
+    h += '<button class="choice" data-j="'+j+'"'+(afford?'':' disabled aria-disabled="true"')+'><span class="k">'+String.fromCharCode(65+n)+'</span><span>'+esc(c.t)+(BUDGET[q]?' <span class="costtag">'+cost+' pt'+(cost===1?'':'s')+'</span>':'')+(afford?'':' <span class="note">(over budget)</span>')+'</span></button>'; });
+  h += '</div><div id="res"></div></div>'+progress()+'</section>'+rail()+'</div>';
+  app.innerHTML = h;
+  [].forEach.call(app.querySelectorAll('.choice:not([disabled])'), function(b){ b.onclick = function(){ choose(+b.getAttribute('data-j')); }; });
+  window.scrollTo(0,0);
+}
+function apply(j){
+  var step = S[cur], c = choicesOf(step)[j], q = step.q;
+  if(BUDGET[q] && (c.cost||0) > left(q)) throw new Error('over budget');
+  spent[q] = (spent[q]||0) + (c.cost||0);
+  for(var k in (c.fx||{})) meters[k] = clamp(meters[k] + c.fx[k]);
+  for(var f in (c.set||{})) st[f] = c.set[f];
+  picks.push({step:step.id, when:QNAME[q].split(' ·')[0], title:step.live?LIVE[co.live].label:step.title, t:c.t, short:shortOf(c.t), v:c.v, r:c.r, l:c.l, ref:c.ref, j:j});
+  return c;
+}
+function choose(j){
+  var c = apply(j);
+  [].forEach.call(app.querySelectorAll('.choice'), function(b){ b.disabled = true; if(+b.getAttribute('data-j')===j) b.classList.add('picked'); });
+  var lab = c.v==='best'?'Strong call':c.v==='ok'?'Partly right':'Costly call';
+  var nx = nextStep(cur+1), res = document.getElementById('res');
+  res.innerHTML = '<div class="result '+c.v+'" tabindex="-1"><span class="verdict">'+lab+'</span><p>'+esc(c.r)+'</p><p class="lesson">'+esc(c.l)+' <span class="eyebrow">'+esc(c.ref)+'</span></p><button class="primary" id="next">'+(nx<0?'See the year-end debrief':'Continue')+'</button></div>';
+  refreshRail();
+  var box = res.firstChild; box.focus({preventScroll:true}); box.scrollIntoView({behavior: matchMedia('(prefers-reduced-motion: reduce)').matches?'auto':'smooth', block:'nearest'});
+  document.getElementById('next').onclick = function(){ cur = nx; if(cur>=0) scene(); else end(); };
+}
+
+/* ---------- run code ---------- */
+var CODE = 'CUL1';
+function runCode(){ return ReportKit.encode(CODE, [C.indexOf(co)].concat(picks.map(function(p){ return p.j; }))); }
+function replay(n){
+  if(n[0] >= C.length) return false;
+  begin(n[0]);
+  try{
+    for(var k=1;k<n.length;k++){
+      if(cur<0) return false;
+      if(S[cur].live && liveLvl===null) resolveLive();
+      if(n[k] >= choicesOf(S[cur]).length) return false;
+      apply(n[k]); cur = nextStep(cur+1);
+    }
+  }catch(e){ return false; }
+  if(cur>=0) return false;
+  end(true); return true;
+}
+
+/* ---------- debrief ---------- */
+function outcome(){
+  var pts = picks.reduce(function(a,p){ return a + (p.v==='best'?2:p.v==='ok'?1:0); }, 0), pct = pts/(picks.length*2);
+  var title, sub;
+  if(pct>=0.8 && meters.tru>=55){ title = 'A culture people trust'; sub = 'People report what they see, quickly, because nothing bad happens when they do, and you made the secure way the easy way. When something real happened, that\'s what decided how it ended.'; }
+  else if(pct>=0.55){ title = 'Better than a completion report'; sub = 'You built some things that change behavior and some that only produce numbers. Look at which choices moved reporting and trust, and which only moved the click rate.'; }
+  else { title = 'The numbers looked fine'; sub = 'Whatever the dashboards showed, people didn\'t report, didn\'t trust the security team, or both. That\'s the difference between a check-the-box program and one that works.'; }
+  return {title:title, sub:sub, best:picks.filter(function(p){ return p.v==='best'; }).length};
+}
+function clickReveal(){
+  var cr = clickRate();
+  return {cr:cr, text: cr===null ? 'You didn\'t run simulated phishing tests, so leadership never saw a click rate.' :
+    'Your test used '+LURE[st.lure].name+', and leadership saw a '+cr+'% click rate. Same staff, same year, a different email: about '+LURE.easy.rate+'% with an easy fake password notice, about '+LURE.inv.rate+'% with a realistic invoice, and about '+LURE.bonus.rate+'% with a holiday bonus. You chose the number when you chose the email.'};
+}
+var EVIDENCE = [
+ 'UC San Diego Health (published 2025): across nearly 20,000 employees, no measurable link between recent annual training and falling for a phish; the "you clicked" lesson helped by about 2 percentage points; click rates ranged from 1.8% to 30.8% depending on the email.',
+ 'ETH Zurich researchers (2022): over 15 months and more than 14,000 employees, the "you clicked" lessons didn\'t make people more resilient, and a report button turned staff into an early-warning system.',
+ 'UK NCSC: four layers of defense against phishing, with people as one of them. "No training package, including phishing simulations, can teach users to spot every phishing attempt."',
+ 'NIST (2016): security fatigue leads people to give up and make riskier choices. Limit security decisions, make the right action simple, and be consistent.',
+ 'GoDaddy (December 2020): a simulated phishing test offering a $650 holiday bonus. About 500 employees clicked, were told they had failed, and the company apologized.'
+];
+function end(rebuilt){
+  var o = outcome(), cr = clickReveal(), code = runCode();
+  var pn = ReportKit.panel({code:code, rebuilt:rebuilt, getDoc:report});
+  var h = '<div class="game"><section class="end"><span class="eyebrow">'+esc(co.name)+' · year-end debrief</span><p class="rk-printname note" style="margin:4px 0 0"></p><h2>'+esc(o.title)+'</h2><p class="lede" style="max-width:62ch">'+esc(o.sub)+'</p>';
+  h += '<div class="grid2"><div class="stat"><div class="n">'+meters.rep+'</div><div class="l">reporting (higher is better)</div></div><div class="stat"><div class="n">'+meters.exp+'</div><div class="l">exposure (lower is better)</div></div><div class="stat"><div class="n">'+meters.tru+'</div><div class="l">trust (higher is better)</div></div><div class="stat"><div class="n">'+(cr.cr===null?'n/a':cr.cr+'%')+'</div><div class="l">click rate leadership saw</div></div></div>';
+  h += '<div class="outcome '+(cr.cr===null?'l0':st.lure==='easy'?'l1':st.lure==='bonus'?'l2':'l0')+'"><span class="verdict">The click-rate reveal</span><p>'+esc(cr.text)+'</p></div>';
+  h += '<div class="sec"><h3>Your decisions</h3><div class="debrief">';
+  picks.forEach(function(p){ var lab = p.v==='best'?'Strong call':p.v==='ok'?'Partly right':'Costly call';
+    h += '<div class="dl '+p.v+'"><div class="h"><span>'+esc(p.when)+' · '+esc(p.title)+'</span><span>'+lab+' · '+esc(p.ref)+'</span></div><p><b>You chose:</b> '+esc(p.t)+'</p><p class="lesson" style="margin:6px 0 0;font-size:14px;color:var(--muted)">'+esc(p.l)+'</p></div>'; });
+  h += '</div></div><div class="real"><h3>The evidence behind the scoring</h3><ul>';
+  EVIDENCE.forEach(function(x){ h += '<li>'+esc(x)+'</li>'; });
+  h += '</ul><p class="note" style="margin-top:8px">'+esc(co.name)+' and its numbers are invented. The click rates in the reveal are illustrative, chosen within the 1.8% to 30.8% range the UC San Diego study found.</p></div>';
+  h += pn.html+'<div class="row"><button class="primary" id="again">Play another company</button><button class="linkbtn" id="same">Replay this one</button></div></section>'+rail()+'</div>';
+  app.innerHTML = h; pn.wire();
+  var ci = C.indexOf(co);
+  document.getElementById('again').onclick = function(){ var k; do{ k = Math.floor(Math.random()*C.length); }while(k===ci && C.length>1); start(k); };
+  document.getElementById('same').onclick = function(){ start(ci); };
+  window.scrollTo(0,0);
+}
+function report(name){
+  var o = outcome(), cr = clickReveal(), g = function(v){ return v==='best'?'Strong call':v==='ok'?'Partly right':'Costly call'; };
+  return {game:'Culture Shift', kind:'Year-end debrief', company:co.name, sector:co.sector, name:name, title:o.title, sub:o.sub, license:ReportKit.LICENSE,
+    stats:[{label:'Strong calls', value:o.best, max:picks.length, bar:false},
+           {label:M.rep, value:meters.rep, better:'high', note:'higher is better'},{label:M.exp, value:meters.exp, better:'low', note:'lower is better'},{label:M.tru, value:meters.tru, better:'high', note:'higher is better'},
+           {label:'Click rate leadership saw', value:(cr.cr===null?'n/a':cr.cr+'%'), bar:false}],
+    sections:[{heading:'The click-rate reveal', intro:cr.text},
+              {heading:'Your decisions', entries:picks.map(function(p){ return {head:p.when+' · '+p.title, tag:g(p.v)+' · '+p.ref, grade:p.v, chose:p.t, lines:[p.l]}; })},
+              {heading:'The evidence behind the scoring', bullets:EVIDENCE, note:co.name+' and its numbers are invented.'}],
+    verify:'To check this result, open Culture Shift, choose "Check a result" on the start screen, and paste the run code. The game rebuilds this exact year, and its outcome should match this page.'};
+}
+
+homeBtn.onclick = function(){
+  var inGame = picks && picks.length && cur>=0;
+  if(inGame && !armed){ armed = true; homeBtn.textContent = 'Leave this year?'; setTimeout(function(){ armed = false; homeBtn.textContent = 'New scenario'; }, 4000); return; }
+  armed = false; homeBtn.textContent = 'New scenario'; intro();
+};
+intro();
+})();
+</script>
+</body>
+</html>
